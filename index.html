@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Credit Risk Analysis</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Credit Risk Analysis">
+  <meta name="author" content="Cleo Batista">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Credit Risk Analysis</h1>
+    <h2>Verifying how your credit will be evaluated</h2>
+    <p>Cleo Batista<br/>Coursera - Developing Data Products</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Credit Risk Analysis</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>This application was made as a Coursera project on &quot;Developing Data Products&quot; Course.</p>
+
+<p>To see the application, visit <a href="https://cleobatista.shinyapps.io/coursera_dev_products_shiny">my repo on shiny.io</a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h3>How to use</h3>
+  </hgroup>
+  <article data-timings="">
+    <p>As the user puts all values in the form, when click on &#39;go&#39; button, the server.R uses the model loaded as &#39;fit&#39; and predicts the user class based on the values in the form.</p>
+
+<p>It&#39;s very simple to use this app. Just put all the informations about proponent and the loan, then click on &#39;Go&#39; Button and see the result. Caution: This app is just for a academic experiment and doesn&#39;t is representative for a serious analysis.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h3>How it works</h3>
+  </hgroup>
+  <article data-timings="">
+    <p>To develop this app, the &#39; GermanCredit&#39; database from &#39;caret&#39; package was used.
+It was fited a model using &#39;train&#39; function in Caret and this model was saved in a rda file. The model predict the outcome &quot;Class&quot; as &#39;bad&#39; or &#39;good&#39; payer. </p>
+
+<pre><code class="r">library(caret)
+data(GermanCredit)
+head(GermanCredit[,c(1:5,10)],n=5)
+</code></pre>
+
+<pre><code>##   Duration Amount InstallmentRatePercentage ResidenceDuration Age Class
+## 1        6   1169                         4                 4  67  Good
+## 2       48   5951                         2                 2  22   Bad
+## 3       12   2096                         2                 3  49  Good
+## 4       42   7882                         2                 4  45  Good
+## 5       24   4870                         3                 4  53   Bad
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <article data-timings="">
+    <p>The model was built using Random Forest Algorithm</p>
+
+<pre><code class="r">inTrain&lt;-createDataPartition(GermanCredit[,10],p=0.8,list=FALSE)
+train&lt;-GermanCredit[inTrain,]
+test&lt;-GermanCredit[-inTrain,]
+
+train_control&lt;-trainControl(method=&#39;cv&#39;,number=10)
+fit&lt;-randomForest(Class~.,data=train,ntree=10)
+pred&lt;-predict(fit,test)
+confusionMatrix(pred,test[,10])
+
+save(fit,file=&#39;fit.rData&#39;)
+</code></pre>
+
+<p>This model &#39;fit&#39; will be loaded by server.r in shiny application and will predict the user class based on all the inputted values in the form.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Credit Risk Analysis'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='How to use'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='How it works'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='NA'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>

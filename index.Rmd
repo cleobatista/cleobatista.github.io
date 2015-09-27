@@ -1,0 +1,55 @@
+---
+title       : Credit Risk Analysis
+subtitle    : Verifying how your credit will be evaluated
+author      : Cleo Batista
+job         : Coursera - Developing Data Products
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## Credit Risk Analysis
+
+This application was made as a Coursera project on "Developing Data Products" Course.
+
+To see the application, visit [my repo on shiny.io](https://cleobatista.shinyapps.io/coursera_dev_products_shiny)
+
+---
+### How to use
+
+As the user puts all values in the form, when click on 'go' button, the server.R uses the model loaded as 'fit' and predicts the user class based on the values in the form.
+
+It's very simple to use this app. Just put all the informations about proponent and the loan, then click on 'Go' Button and see the result. Caution: This app is just for a academic experiment and doesn't is representative for a serious analysis.
+
+---
+
+### How it works
+To develop this app, the ' GermanCredit' database from 'caret' package was used.
+It was fited a model using 'train' function in Caret and this model was saved in a rda file. The model predict the outcome "Class" as 'bad' or 'good' payer. 
+
+```{r}
+library(caret)
+data(GermanCredit)
+head(GermanCredit[,c(1:5,10)],n=5)
+```
+
+---
+The model was built using Random Forest Algorithm
+
+```{r eval=FALSE}
+inTrain<-createDataPartition(GermanCredit[,10],p=0.8,list=FALSE)
+train<-GermanCredit[inTrain,]
+test<-GermanCredit[-inTrain,]
+
+train_control<-trainControl(method='cv',number=10)
+fit<-randomForest(Class~.,data=train,ntree=10)
+pred<-predict(fit,test)
+confusionMatrix(pred,test[,10])
+
+save(fit,file='fit.rData')
+```
+
+This model 'fit' will be loaded by server.r in shiny application and will predict the user class based on all the inputted values in the form.
